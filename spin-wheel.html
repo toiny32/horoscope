@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Wheel - Money Giveaway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            margin: 0 auto 40px;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #FFD700;
+            z-index: 5;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+            transition: transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .spin-button {
+            padding: 18px 60px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .spin-button:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+        }
+
+        .spin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            font-size: 2.5em;
+            color: white;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+            animation: popIn 0.6s ease-out;
+        }
+
+        .result-box.hidden {
+            display: none;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎡 lets see how much money you'll give us today!</h1>
+
+        <div class="spinner-container">
+            <div class="pointer"></div>
+            <svg id="wheelSVG" viewBox="0 0 400 400">
+                <!-- Wheel will be generated here -->
+            </svg>
+        </div>
+
+        <button class="spin-button" id="spinBtn" onclick="spinWheel()">🎡 SPIN NOW</button>
+
+        <div class="result-box hidden" id="result"></div>
+    </div>
+
+    <script>
+        const amounts = [0, 15, 30, 50, 70, 85, 100];
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA502', '#95E1D3', '#F38181', '#AA96DA'];
+        const centerX = 200;
+        const centerY = 200;
+        const radius = 150;
+        const sliceAngle = 360 / amounts.length;
+        let isSpinning = false;
+
+        function degreesToRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function createWheel() {
+            const svg = document.getElementById('wheelSVG');
+            svg.innerHTML = '';
+
+            amounts.forEach((amount, index) => {
+                const startAngle = index * sliceAngle;
+                const endAngle = (index + 1) * sliceAngle;
+
+                const startRad = degreesToRadians(startAngle - 90);
+                const endRad = degreesToRadians(endAngle - 90);
+
+                const x1 = centerX + radius * Math.cos(startRad);
+                const y1 = centerY + radius * Math.sin(startRad);
+                const x2 = centerX + radius * Math.cos(endRad);
+                const y2 = centerY + radius * Math.sin(endRad);
+
+                const largeArc = sliceAngle > 180 ? 1 : 0;
+
+                const pathData = [
+                    `M ${centerX} ${centerY}`,
+                    `L ${x1} ${y1}`,
+                    `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                    'Z'
+                ].join(' ');
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathData);
+                path.setAttribute('fill', colors[index]);
+                path.setAttribute('stroke', 'white');
+                path.setAttribute('stroke-width', '3');
+
+                // Text positioning
+                const textAngle = startAngle + sliceAngle / 2;
+                const textRad = degreesToRadians(textAngle - 90);
+                const textX = centerX + (radius * 0.65) * Math.cos(textRad);
+                const textY = centerY + (radius * 0.65) * Math.sin(textRad);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', textX);
+                text.setAttribute('y', textY);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.setAttribute('font-size', '32');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('fill', 'white');
+                text.textContent = amount + '₹';
+
+                svg.appendChild(path);
+                svg.appendChild(text);
+            });
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+
+            isSpinning = true;
+            const spinBtn = document.getElementById('spinBtn');
+            const result = document.getElementById('result');
+            const svg = document.getElementById('wheelSVG');
+
+            spinBtn.disabled = true;
+            result.classList.add('hidden');
+
+            // Random selection
+            const randomIndex = Math.floor(Math.random() * amounts.length);
+            const selectedAmount = amounts[randomIndex];
+
+            // Calculate rotation to position selected slot at the top (pointer position)
+            // Each slot takes up sliceAngle degrees
+            // We need to rotate so that the center of the selected slot aligns with the pointer (top/0°)
+            const slotCenter = randomIndex * sliceAngle + sliceAngle / 2;
+            
+            // Rotation needed: negative of slot center (to bring 0° to the pointer position)
+            // We add multiple full rotations for visual effect
+            const fullRotations = 5 + Math.floor(Math.random() * 3); // 5-7 full rotations
+            const finalRotation = fullRotations * 360 - slotCenter;
+
+            // Apply rotation with animation
+            svg.style.transform = 'rotate(0deg)'; // Reset
+            setTimeout(() => {
+                svg.style.transition = 'transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                svg.style.transform = `rotate(${finalRotation}deg)`;
+            }, 10);
+
+            setTimeout(() => {
+                svg.style.transition = 'none';
+                result.textContent = `🎉 Horray...you give us ${selectedAmount} ₹`;
+                result.classList.remove('hidden');
+                spinBtn.disabled = false;
+                isSpinning = false;
+            }, 4100);
+        }
+
+        // Initialize wheel on page load
+        window.addEventListener('load', createWheel);
+    </script>
+</body>
+</html>
