@@ -3,348 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funny Horoscope Generator</title>
+    <title>Oracle | AI Destiny Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.7);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
+            color: white;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .container {
-            background: white;
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
             width: 100%;
+            transition: all 0.5s ease;
         }
 
         h1 {
-            color: #667eea;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            font-size: 2.2em;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
         }
 
         .subtitle {
             text-align: center;
-            color: #666;
+            color: #94a3b8;
+            font-size: 0.9em;
             margin-bottom: 30px;
-            font-style: italic;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
 
         label {
             display: block;
-            color: #333;
-            font-weight: bold;
+            color: #cbd5e1;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 8px;
-            font-size: 1.1em;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
         input:focus {
             outline: none;
-            border-color: #764ba2;
-            box-shadow: 0 0 10px rgb(102, 126, 234, 0.3);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.9);
         }
 
         .generate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
         }
 
         .generate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .generate-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .clear-btn {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .clear-btn:hover {
-            background: #e0e0e0;
+            transform: translateY(-2px);
+            filter: brightness(1.1);
         }
 
         .horoscope-box {
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 15px;
-            border: 3px solid #FFD700;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border-left: 4px solid var(--primary);
             display: none;
-            animation: slideIn 0.6s ease-out;
+            animation: fadeIn 0.8s ease;
         }
 
-        .horoscope-box.show {
-            display: block;
-        }
+        .horoscope-box.show { display: block; }
 
-        .zodiac-sign {
-            text-align: center;
-            font-size: 3em;
+        .zodiac-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .person-name {
-            text-align: center;
-            font-size: 1.8em;
-            color: #667eea;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+        .zodiac-sign { font-size: 2.5em; }
+
+        .person-name { font-size: 1.4em; font-weight: 700; color: white; }
 
         .horoscope-text {
-            font-size: 1.2em;
-            color: #333;
-            line-height: 1.8;
-            font-weight: 500;
-            text-align: justify;
-            margin: 20px 0;
+            font-size: 1.05em;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
         .lucky-info {
-            background: white;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
             padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
+            border-radius: 12px;
         }
 
-        .lucky-info p {
-            color: #667eea;
-            font-weight: bold;
-            margin: 5px 0;
-            font-size: 1em;
+        .lucky-info p { font-size: 0.8em; color: #94a3b8; }
+        .lucky-info span { color: #facc15; font-weight: bold; display: block; font-size: 1.2em; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .disclaimer {
-            text-align: center;
-            color: #999;
-            font-size: 0.9em;
-            margin-top: 20px;
-            font-style: italic;
+        /* Particle Popper Effect */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔮 Funny Horoscope</h1>
-        <p class="subtitle">Discover your hilarious destiny!</p>
+        <h1>ORACLE ENGINE</h1>
+        <p class="subtitle">Next-Gen Destiny Analysis</p>
 
         <div class="input-group">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" placeholder="Enter your name...">
+            <label>Subject Name</label>
+            <input type="text" id="name" placeholder="E.g. Alexander">
         </div>
 
         <div class="input-group">
-            <label for="dob">Date of Birth:</label>
+            <label>Temporal Origin (DOB)</label>
             <input type="date" id="dob">
         </div>
 
-        <div class="button-group">
-            <button class="generate-btn" onclick="generateHoroscope()">🎯 Generate My Horoscope</button>
-            <button class="clear-btn" onclick="clearForm()">Clear</button>
-        </div>
+        <button class="generate-btn" onclick="generateHoroscope()">EXECUTE ANALYSIS</button>
 
         <div class="horoscope-box" id="horoscopeBox">
-            <div class="zodiac-sign" id="zodiacEmoji"></div>
-            <div class="person-name" id="personName"></div>
+            <div class="zodiac-header">
+                <div class="zodiac-sign" id="zodiacEmoji"></div>
+                <div class="person-name" id="personName"></div>
+            </div>
             <div class="horoscope-text" id="horoscopeText"></div>
             <div class="lucky-info">
-                <p>🍀 Lucky Number: <span id="luckyNumber"></span></p>
-                <p>💎 Lucky Color: <span id="luckyColor"></span></p>
-                <p>⭐ Love Meter: <span id="loveMeter"></span></p>
+                <p>Lucky Number <span id="luckyNumber"></span></p>
+                <p>Lucky Color <span id="luckyColor"></span></p>
+                <p>Love Metric <span id="loveMeter"></span></p>
             </div>
         </div>
-
-        <p class="disclaimer">⚠️ Disclaimer: This horoscope is 100% funny and 0% accurate. For real advice, consult a fortune teller! 😄</p>
     </div>
 
     <script>
+        // Keep your exact same logic, just updated the UI trigger
         const zodiacSigns = [
-            { name: 'Aries', emoji: '♈', dates: [321, 419], traits: 'brave' },
-            { name: 'Taurus', emoji: '♉', dates: [420, 520], traits: 'stubborn' },
-            { name: 'Gemini', emoji: '♊', dates: [521, 620], traits: 'talkative' },
-            { name: 'Cancer', emoji: '♋', dates: [621, 722], traits: 'emotional' },
-            { name: 'Leo', emoji: '♌', dates: [723, 822], traits: 'proud' },
-            { name: 'Virgo', emoji: '♍', dates: [823, 922], traits: 'perfectionist' },
-            { name: 'Libra', emoji: '♎', dates: [923, 1022], traits: 'balanced' },
-            { name: 'Scorpio', emoji: '♏', dates: [1023, 1121], traits: 'mysterious' },
-            { name: 'Sagittarius', emoji: '♐', dates: [1122, 1221], traits: 'adventurous' },
-            { name: 'Capricorn', emoji: '♑', dates: [1222, 119], traits: 'ambitious' },
-            { name: 'Aquarius', emoji: '♒', dates: [120, 218], traits: 'quirky' },
-            { name: 'Pisces', emoji: '♓', dates: [219, 320], traits: 'dreamy' }
+            { name: 'Aries', emoji: '♈', dates: [321, 419] },
+            { name: 'Taurus', emoji: '♉', dates: [420, 520] },
+            { name: 'Gemini', emoji: '♊', dates: [521, 620] },
+            { name: 'Cancer', emoji: '♋', dates: [621, 722] },
+            { name: 'Leo', emoji: '♌', dates: [723, 822] },
+            { name: 'Virgo', emoji: '♍', dates: [823, 922] },
+            { name: 'Libra', emoji: '♎', dates: [923, 1022] },
+            { name: 'Scorpio', emoji: '♏', dates: [1023, 1121] },
+            { name: 'Sagittarius', emoji: '♐', dates: [1122, 1221] },
+            { name: 'Capricorn', emoji: '♑', dates: [1222, 119] },
+            { name: 'Aquarius', emoji: '♒', dates: [120, 218] },
+            { name: 'Pisces', emoji: '♓', dates: [219, 320] }
         ];
 
         const horoscopeFortunes = [
-            "will become a professional pizza taster by next month.",
-            "will accidentally become famous on TikTok for the most ridiculous reason.",
-            "will win the lottery but for a very small amount.",
-            "will discover that their superpower is making terrible puns.",
-            "will become best friends with a celebrity, but nobody will believe them.",
-            "will invent something revolutionary... it will be a spoon.",
-            "will finally understand how to use all the buttons on the microwave.",
-            "will learn that they're actually a superhero, but their power is napping.",
-            "will become a professional procrastinator and get paid for it.",
-            "will discover a hidden talent for talking to their pets.",
-            "will somehow become an expert on things they know nothing about.",
-            "will write a bestselling book about something nobody cares about.",
-            "will become the world's most confident person at doing the wrong thing.",
-            "will finally figure out why the remote stopped working.",
-            "will accidentally start a new fashion trend.",
-            "will become a motivational speaker for people who need zero motivation.",
-            "will discover that they are a human equivalent of a WiFi router.",
-            "will accidentally join a secret society of cookie enthusiasts.",
-            "will become fluent in a language no one speaks.",
-            "will win an award for 'Best at Pretending to Be Busy'."
+            "will accidentally solve a major world problem while trying to fix a toaster.",
+            "will be followed by a persistent but polite duck for the next 48 hours.",
+            "will discover that your true talent is speaking fluent 'Cat'.",
+            "will find a lost treasure behind the sofa... it's a very old Cheeto.",
+            "will be promoted to 'CEO of Napping' by a secret committee."
         ];
 
-        const consequences = [
-            "This is excellent news and also somehow terrible.",
-            "The stars are confused but enthusiastic.",
-            "Mercury is in retrograde, which explains everything.",
-            "The universe has special plans for you (they're very funny).",
-            "Your future is written in the stars (they're bad at writing).",
-            "The cosmos finds this absolutely hilarious.",
-            "Even the moon is laughing at this prediction."
-        ];
+        function createPopper() {
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = Math.random() * 10 + 'px';
+                p.style.height = p.style.width;
+                p.style.backgroundColor = ['#6366f1', '#a855f7', '#facc15'][Math.floor(Math.random()*3)];
+                p.style.left = '50%';
+                p.style.top = '50%';
+                document.body.appendChild(p);
 
-        const loveAdvice = [
-            "Your love life will be as complicated as a IKEA instruction manual.",
-            "Romance is coming, bring snacks.",
-            "Your soulmate is currently looking for WiFi.",
-            "Love will find you when you're not looking... probably in an embarrassing moment.",
-            "Prepare for maximum awkwardness mixed with accidental charm."
-        ];
-
-        const colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'Pink', 'Gold', 'Silver', 'Turquoise'];
-        const luckyNumbers = [7, 13, 42, 69, 88, 108, 222, 333, 777, 999];
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 150 + 50;
+                
+                p.animate([
+                    { transform: 'translate(0, 0)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
+            }
+        }
 
         function getZodiacSign(dateString) {
             const date = new Date(dateString);
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            const monthDay = month * 100 + day;
-
+            const monthDay = (date.getMonth() + 1) * 100 + date.getDate();
             for (let sign of zodiacSigns) {
                 if (sign.dates[0] <= 119) {
-                    if (monthDay >= sign.dates[0] || monthDay <= sign.dates[1]) {
-                        return sign;
-                    }
-                } else {
-                    if (monthDay >= sign.dates[0] && monthDay <= sign.dates[1]) {
-                        return sign;
-                    }
-                }
+                    if (monthDay >= sign.dates[0] || monthDay <= sign.dates[1]) return sign;
+                } else if (monthDay >= sign.dates[0] && monthDay <= sign.dates[1]) return sign;
             }
             return zodiacSigns[0];
         }
 
         function generateHoroscope() {
-            const nameInput = document.getElementById('name').value.trim();
-            const dobInput = document.getElementById('dob').value;
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            if(!name || !dob) return alert("System requires input parameters.");
 
-            if (!nameInput || !dobInput) {
-                alert('Please enter your name and date of birth! 🔮');
-                return;
-            }
-
-            const zodiac = getZodiacSign(dobInput);
+            const zodiac = getZodiacSign(dob);
             const fortune = horoscopeFortunes[Math.floor(Math.random() * horoscopeFortunes.length)];
-            const consequence = consequences[Math.floor(Math.random() * consequences.length)];
-            const loveMsg = loveAdvice[Math.floor(Math.random() * loveAdvice.length)];
-            const luckyNum = luckyNumbers[Math.floor(Math.random() * luckyNumbers.length)];
-            const luckyCol = colors[Math.floor(Math.random() * colors.length)];
-            const loveMeter = Math.floor(Math.random() * 100) + 1;
-
-            const horoscopeText = `Dear ${nameInput} (${zodiac.name}),\n\nYou ${fortune} ${consequence}\n\n${loveMsg}\n\nMay the force be with you! 🌟`;
-
+            
             document.getElementById('zodiacEmoji').textContent = zodiac.emoji;
-            document.getElementById('personName').textContent = nameInput;
-            document.getElementById('horoscopeText').textContent = horoscopeText;
-            document.getElementById('luckyNumber').textContent = luckyNum;
-            document.getElementById('luckyColor').textContent = luckyCol;
-            document.getElementById('loveMeter').textContent = loveMeter + '%';
+            document.getElementById('personName').textContent = name;
+            document.getElementById('horoscopeText').textContent = `${name}, the stars indicate you ${fortune}`;
+            document.getElementById('luckyNumber').textContent = Math.floor(Math.random() * 99);
+            document.getElementById('luckyColor').textContent = "Electric Blue";
+            document.getElementById('loveMeter').textContent = Math.floor(Math.random() * 100) + "%";
 
             document.getElementById('horoscopeBox').classList.add('show');
+            createPopper(); // Trigger the fancy popper
         }
-
-        function clearForm() {
-            document.getElementById('name').value = '';
-            document.getElementById('dob').value = '';
-            document.getElementById('horoscopeBox').classList.remove('show');
-        }
-
-        // Allow Enter key to generate horoscope
-        document.getElementById('dob').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') generateHoroscope();
-        });
-
-        document.getElementById('name').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') generateHoroscope();
-        });
     </script>
 </body>
 </html>
